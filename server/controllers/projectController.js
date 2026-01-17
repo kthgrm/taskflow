@@ -22,3 +22,18 @@ exports.createProject = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+exports.getProjects = async (req, res) => {
+  try {
+    const projects = await Project.find({ owner: req.user.id }).sort({
+      createdAt: -1,
+    });
+    if (projects.length === 0) {
+      res.status(200).json({ message: "No projects found", projects: [] });
+    }
+
+    res.status(200).json({ message: "Projects retrieved", projects });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
