@@ -6,11 +6,13 @@ require("dotenv").config();
 const app = express();
 
 const authRoutes = require("./routes/authRoutes");
+const projectRoutes = require("./routes/projectRoutes");
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/api/projects", projectRoutes);
 
 // Test Route
 app.get("/health", (req, res) => {
