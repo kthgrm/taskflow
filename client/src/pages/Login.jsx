@@ -1,5 +1,5 @@
 import { useState } from "react";
-import API from "../services/api";
+import api from "../services/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -8,7 +8,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await API.post("/auth/login", {
+      const res = await api.post("/auth/login", {
         email,
         password,
       });
@@ -18,6 +18,7 @@ const Login = () => {
       localStorage.setItem("token", token);
 
       alert("Login successful");
+      console.log("JWT:", token);
     } catch (error) {
       alert(error.response?.data?.message || "Login failed");
     }
