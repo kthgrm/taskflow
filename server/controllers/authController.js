@@ -24,12 +24,12 @@ exports.register = async (req, res) => {
       password: hashedPassword,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "User registered Successfully",
       userID: user._id,
     });
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    return res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -39,19 +39,19 @@ exports.login = async (req, res) => {
 
     // Validate Input
     if (!email || !password) {
-      res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     // Find User
     const user = await User.findOne({ email });
     if (!user) {
-      res.status(400).json({ message: "Invalid Credentials" });
+      return res.status(400).json({ message: "Invalid Credentials" });
     }
 
     // Compare Hash Password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      res.status(400).json({ message: "Invalid Credentials" });
+      return res.status(400).json({ message: "Invalid Credentials" });
     }
 
     // Create Token
@@ -59,8 +59,11 @@ exports.login = async (req, res) => {
       expiresIn: "1d",
     });
 
-    res.status(200).json({ message: "Login Successful", token });
+    return res.status(200).json({
+      message: "Login Successful",
+      token,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    return res.status(500).json({ message: "Server Error" });
   }
 };

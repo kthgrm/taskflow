@@ -14,12 +14,12 @@ exports.createProject = async (req, res) => {
       owner: req.user.id,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Project created successfully",
       project,
     });
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    return res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -29,11 +29,13 @@ exports.getProjects = async (req, res) => {
       createdAt: -1,
     });
     if (projects.length === 0) {
-      res.status(200).json({ message: "No projects found", projects: [] });
+      return res
+        .status(200)
+        .json({ message: "No projects found", projects: [] });
     }
 
-    res.status(200).json({ message: "Projects retrieved", projects });
+    return res.status(200).json({ message: "Projects retrieved", projects });
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    return res.status(500).json({ message: "Server Error" });
   }
 };

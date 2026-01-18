@@ -1,7 +1,9 @@
 import { useState } from "react";
 import api from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -18,7 +20,7 @@ const Login = () => {
       localStorage.setItem("token", token);
 
       alert("Login successful");
-      console.log("JWT:", token);
+      navigate("/dashboard");
     } catch (error) {
       alert(error.response?.data?.message || "Login failed");
     }
