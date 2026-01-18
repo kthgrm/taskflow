@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Projects from "./pages/Projects";
 import Register from "./pages/Register";
 import { Routes, Route } from "react-router-dom";
+import Tasks from "./pages/Tasks";
 
 function App() {
   return (
@@ -25,6 +26,15 @@ function App() {
         element={
           <ProtectedRoute>
             <Projects />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/projects/:id"
+        element={
+          <ProtectedRoute>
+            <Tasks />
           </ProtectedRoute>
         }
       />

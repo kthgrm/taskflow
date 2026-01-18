@@ -20,9 +20,9 @@ exports.createTask = async (req, res) => {
       project: projectId,
     });
 
-    res.status(201).json({ message: "Task created successfully", task });
+    return res.status(201).json({ message: "Task created successfully", task });
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    return res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -44,8 +44,10 @@ exports.getTasks = async (req, res) => {
     if (tasks.length === 0) {
       return res.status(200).json({ message: "No tasks found" });
     }
-    res.status(200).json({ message: "Task retrieved successfully", tasks });
+    return res
+      .status(200)
+      .json({ message: "Task retrieved successfully", tasks });
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    return res.status(500).json({ message: "Server Error" });
   }
 };
