@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 
 const Tasks = () => {
   const { id } = useParams();
@@ -35,6 +36,12 @@ const Tasks = () => {
     fetchTasks();
   }, []);
 
+  const columns = {
+    todo: "Todo",
+    "in-progress": "In Progress",
+    done: "Done",
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
       <h1 className="text-3xl font-bold mb-6">Project Tasks</h1>
@@ -58,18 +65,67 @@ const Tasks = () => {
         </button>
       </form>
 
-      <div className="space-y-3">
-        {tasks ? (
-          tasks.map((task) => (
-            <div key={task._id} className="bg-gray-800 p-3 rounded">
-              <h3 className="font-semibold">{task.title}</h3>
-              <p className="text-sm text-gray-400">Status: {task.status}</p>
-            </div>
-          ))
-        ) : (
-          <div>No task found</div>
-        )}
-      </div>
+      <DragDropContext
+        onDragEnd={async (result) => {
+          if (!result.destination) return;
+
+          const taskId = result.draggableId;
+          const newStatus = result.destination.droppableId;
+
+          try {
+            await api.put(`/tasks/${taskId}`, {
+              status: newStatus,
+            });
+
+            setTasks((prev) =>
+              prev.map((task) =>
+                task._id === taskId ? { ...task, status: newStatus } : task,
+              ),
+            );
+          } catch (error) {
+            alert("Failed to update status");
+          }
+        }}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {Object.entries(columns).map(([key, label]) => (
+            <Droppable droppableId={key} key={key}>
+              {(provided) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  className="bg-gray-800 p-4 rounded min-h-[300px]"
+                >
+                  <h2 className="font-bold mb-3">{label}</h2>
+
+                  {tasks
+                    .filter((task) => task.status === key)
+                    .map((task, index) => (
+                      <Draggable
+                        draggableId={task._id}
+                        index={index}
+                        key={task._id}
+                      >
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            className="bg-gray-700 p-3 rounded mb-2"
+                          >
+                            {task.title}
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          ))}
+        </div>
+      </DragDropContext>
     </div>
   );
 };
