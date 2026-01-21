@@ -13,10 +13,10 @@ const errorHandler = require("./middleware/errorHandler");
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(errorHandler);
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use(errorHandler);
 
 // Test Route
 app.get("/health", (req, res) => {
