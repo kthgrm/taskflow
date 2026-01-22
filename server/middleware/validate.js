@@ -9,3 +9,13 @@ exports.validateBody = (schema) => (req, res, next) => {
     next(new AppError(message, 400));
   }
 };
+
+exports.validateParams = (schema) => (req, res, next) => {
+  try {
+    schema.parse(req.params);
+    next();
+  } catch (error) {
+    const message = erro.issues[0].message;
+    throw new AppError(message, 400);
+  }
+};

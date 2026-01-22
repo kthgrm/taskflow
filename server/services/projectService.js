@@ -1,5 +1,4 @@
 const Project = require("../models/Project");
-const AppError = require("../utils/AppError");
 
 exports.createProject = async (name, description, userId) => {
   const project = await Project.create({
@@ -17,4 +16,13 @@ exports.getProjects = async (userId) => {
   });
 
   return projects;
+};
+
+exports.getProject = async (projectId, userId) => {
+  const project = await Project.findOne({
+    _id: projectId,
+    owner: userId,
+  });
+
+  return project;
 };

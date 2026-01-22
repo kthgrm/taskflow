@@ -27,3 +27,18 @@ exports.getProjects = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getProject = async (req, res, next) => {
+  try {
+    const projectId = req.params.id;
+
+    const project = await projectService.getProject(projectId, req.user.id);
+
+    return res.status(200).json({
+      message: "Project retrieved",
+      project,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
