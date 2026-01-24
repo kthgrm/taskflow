@@ -10,12 +10,30 @@ exports.createProject = async (name, description, userId) => {
   return project;
 };
 
-exports.getProjects = async (userId) => {
-  const projects = await Project.find({ owner: userId }).sort({
-    createdAt: -1,
-  });
+exports.getProjects = async (userId, page, limit, sortBy, order, search) => {
+  const skip = (page - 1) * limit;
 
-  return projects;
+  const query = {
+    owner: userId,
+    name: { $regex: search, $options: "i" },
+  };
+
+  const [projects, total] = await Promise.all([
+    Project.find(query)
+      .sort({ [sortBy]: order })
+      .skip(skip)
+      .limit(limit),
+
+    Project.countDocuments(query),
+  ]);
+
+  return {
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+    projects,
+  };
 };
 
 exports.getProject = async (projectId, userId) => {

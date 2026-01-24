@@ -18,11 +18,11 @@ exports.register = async (req, res, next) => {
   }
 };
 
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const data = authService.loginUser(email, password);
+    const data = await authService.loginUser(email, password);
 
     return res.status(200).json({
       message: "Login Successful",

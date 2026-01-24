@@ -20,9 +20,24 @@ exports.createProject = async (req, res, next) => {
 
 exports.getProjects = async (req, res, next) => {
   try {
-    const projects = await projectService.getProjects(req.user.id);
+    const page = parseInt(req.query.page) || 1;
+    const limit = Math.min(parseInt(req.query.limit) || 10, 50);
 
-    return res.status(200).json({ message: "Projects retrieved", projects });
+    const sortBy = req.query.sort || "createdAt";
+    const order = req.query.order === "asc" ? 1 : -1;
+
+    const search = req.query.search || "";
+
+    const result = await projectService.getProjects(
+      req.user.id,
+      page,
+      limit,
+      sortBy,
+      order,
+      search,
+    );
+
+    return res.status(200).json(result);
   } catch (error) {
     next(error);
   }
