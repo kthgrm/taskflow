@@ -1,6 +1,3 @@
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const authService = require("../services/authService");
 
 exports.register = async (req, res, next) => {
@@ -28,6 +25,28 @@ exports.login = async (req, res, next) => {
       message: "Login Successful",
       ...data,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.refreshToken = async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body;
+
+    const data = await authService.refreshAccessToken(refreshToken);
+
+    return res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.logout = async (req, res, next) => {
+  try {
+    await authService.logoutUser(req.user.id);
+
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     next(error);
   }
