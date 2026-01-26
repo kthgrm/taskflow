@@ -21,10 +21,19 @@ exports.login = async (req, res, next) => {
 
     const data = await authService.loginUser(email, password);
 
-    return res.status(200).json({
-      message: "Login Successful",
-      ...data,
-    });
+    return res
+      .cookie("refreshToken", data.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
+      .status(200)
+      .json({
+        message: "Login successful",
+        accessToken: data.accessToken,
+        user: data.user,
+      });
   } catch (error) {
     next(error);
   }
@@ -32,11 +41,11 @@ exports.login = async (req, res, next) => {
 
 exports.refreshToken = async (req, res, next) => {
   try {
-    const { refreshToken } = req.body;
+    const { refreshToken } = req.cookies;
 
     const data = await authService.refreshAccessToken(refreshToken);
 
-    return res.status(200).json(data);
+    return res.json(data);
   } catch (error) {
     next(error);
   }
@@ -46,7 +55,9 @@ exports.logout = async (req, res, next) => {
   try {
     await authService.logoutUser(req.user.id);
 
-    res.status(200).json({ message: "Logged out successfully" });
+    res
+      .clearCookie("refreshToken")
+      .json({ message: "Logged out successfully" });
   } catch (error) {
     next(error);
   }

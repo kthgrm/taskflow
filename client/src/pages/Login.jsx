@@ -15,9 +15,9 @@ const Login = () => {
         password,
       });
 
-      const token = res.data.token;
+      const token = res.data.accessToken;
 
-      localStorage.setItem("token", token);
+      localStorage.setItem("accessToken", token);
 
       alert("Login successful");
       navigate("/dashboard");
